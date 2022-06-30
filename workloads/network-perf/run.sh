@@ -58,3 +58,4 @@ fi
 remove_benchmark_operator ${OPERATOR_REPO} ${OPERATOR_BRANCH}
 
 log "Finished workload ${0}"
+exit ${rc}

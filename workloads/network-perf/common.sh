@@ -54,6 +54,16 @@ export_defaults() {
     fi
     export server=${nodes[0]}
     export client=${nodes[1]}
+
+  elif [[ ${platform} == "nutanix" ]]; then
+    nodes=($(oc get nodes -l node-role.kubernetes.io/worker,node-role.kubernetes.io/workload!="",node-role.kubernetes.io/infra!="" -o jsonpath='{range .items[*]}{ .metadata.labels.kubernetes\.io/hostname}{"\n"}{end}'))
+    if [[ ${#nodes[@]} -lt 2 ]]; then
+      log "At least 2 worker nodes placed are required"
+      exit 1
+    fi
+    export server=${nodes[0]}
+    export client=${nodes[1]}
+  
   elif [[ ${MULTI_AZ} == "true" ]]; then
     # Get AZs from worker nodes
     log "Colocating uperf pods in different AZs"
@@ -99,6 +109,7 @@ run_benchmark_comparison() {
     log "Removing touchstone"
     remove_touchstone
   fi
+   rc=$?
 }
 
 export_defaults
